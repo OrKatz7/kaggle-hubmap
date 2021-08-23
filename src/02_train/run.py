@@ -42,16 +42,16 @@ def run(seed, data_df, pseudo_df, trn_idxs_list, val_idxs_list):
         log_df = pd.DataFrame(columns=log_cols, dtype=object)
         log_counter = 0
 
-        #dataset
-        trn_df = data_df.iloc[trn_idxs].reset_index(drop=True)
-        val_df = data_df.iloc[val_idxs].reset_index(drop=True)
+#         #dataset
+#         trn_df = data_df.iloc[trn_idxs].reset_index(drop=True)
+#         val_df = data_df.iloc[val_idxs].reset_index(drop=True)
         
-        #add pseudo label
-        if pseudo_df is not None:
-            trn_df = pd.concat([trn_df, pseudo_df], axis=0).reset_index(drop=True)
+#         #add pseudo label
+#         if pseudo_df is not None:
+#             trn_df = pd.concat([trn_df, pseudo_df], axis=0).reset_index(drop=True)
         
         # dataloader
-        valid_dataset = HuBMAPDatasetTrain(val_df, config, mode='valid')
+        valid_dataset = HuBMAPDatasetTrain(val_idxs, config, mode='valid')
         valid_loader  = DataLoader(valid_dataset, batch_size=config['test_batch_size'],
                                    shuffle=False, num_workers=4, pin_memory=True)
         
@@ -96,27 +96,9 @@ def run(seed, data_df, pseudo_df, trn_idxs_list, val_idxs_list):
             if epoch < config['restart_epoch_list'][fold]:
                 scheduler.step()
                 continue
-                
-#             if elapsed_time(start_time) > config['time_limit']:
-#                 print('elapsed_time go beyond {} sec'.format(config['time_limit']))
-#                 break
-                
-            #print('lr = ', scheduler.get_lr()[0])
             print('lr : ', [ group['lr'] for group in optimizer.param_groups ])
-            
             #train
-            trn_df['binned'] = trn_df['binned'].apply(lambda x:config['binned_max'] if x>=config['binned_max'] else x)
-            n_sample = trn_df['is_masked'].value_counts().min()
-            trn_df_0 = trn_df[trn_df['is_masked']==False].sample(n_sample, replace=True)
-            trn_df_1 = trn_df[trn_df['is_masked']==True].sample(n_sample, replace=True)
-            
-            n_bin = int(trn_df_1['binned'].value_counts().mean())
-            trn_df_list = []
-            for bin_size in trn_df_1['binned'].unique():
-                trn_df_list.append(trn_df_1[trn_df_1['binned']==bin_size].sample(n_bin, replace=True))
-            trn_df_1 = pd.concat(trn_df_list, axis=0)
-            trn_df_balanced = pd.concat([trn_df_1, trn_df_0], axis=0).reset_index(drop=True)
-            train_dataset = HuBMAPDatasetTrain(trn_df_balanced, config, mode='train')
+            train_dataset = HuBMAPDatasetTrain(trn_idxs, config, mode='train')
             train_loader  = DataLoader(train_dataset, batch_size=config['trn_batch_size'],
                                        shuffle=True, num_workers=4, pin_memory=True, drop_last=True)
             model.train()
