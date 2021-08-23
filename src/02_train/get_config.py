@@ -10,7 +10,7 @@ def get_config():
         'FOLD_LIST':[0,1,2,3],
         'VERSION':VERSION,
         'OUTPUT_PATH':f'./result/{VERSION}/',
-        'INPUT_PATH':'../../input/hubmap-kidney-segmentation/',
+        'INPUT_PATH':'./data/*',
         
         'train_data_path_list':[
             '../01_data_preparation/01_01/result/01_01/', 
