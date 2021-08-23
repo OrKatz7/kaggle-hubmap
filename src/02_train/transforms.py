@@ -7,7 +7,7 @@ from albumentations import (Compose, HorizontalFlip, VerticalFlip, Rotate, Rando
                             GaussianBlur,CLAHE,
                             Cutout, CoarseDropout, GaussNoise, ChannelShuffle, ToGray, OpticalDistortion,
                             Normalize, OneOf, NoOp)
-from albumentations.pytorch import ToTensor
+from albumentations.pytorch import ToTensorV2 as ToTensor
 from get_config import get_config
 config = get_config()
 
