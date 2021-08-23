@@ -51,7 +51,7 @@ def run(seed, data_df, pseudo_df, trn_idxs_list, val_idxs_list):
 #             trn_df = pd.concat([trn_df, pseudo_df], axis=0).reset_index(drop=True)
         
         # dataloader
-        valid_dataset = HuBMAPDatasetTrain(val_idxs, config, mode='valid')
+        valid_dataset = RSNADatasetTrain(val_idxs, config, mode='valid')
         valid_loader  = DataLoader(valid_dataset, batch_size=config['test_batch_size'],
                                    shuffle=False, num_workers=4, pin_memory=True)
         
@@ -98,7 +98,7 @@ def run(seed, data_df, pseudo_df, trn_idxs_list, val_idxs_list):
                 continue
             print('lr : ', [ group['lr'] for group in optimizer.param_groups ])
             #train
-            train_dataset = HuBMAPDatasetTrain(trn_idxs, config, mode='train')
+            train_dataset = RSNADatasetTrain(trn_idxs, config, mode='train')
             train_loader  = DataLoader(train_dataset, batch_size=config['trn_batch_size'],
                                        shuffle=True, num_workers=4, pin_memory=True, drop_last=True)
             model.train()
