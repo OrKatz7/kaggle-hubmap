@@ -7,7 +7,7 @@ VERSION = '02'
 def get_config():
     config = {
         'split_seed_list':[0],
-        'FOLD_LIST':[0,1,2,3],
+        'FOLD_LIST':[0],
         'VERSION':VERSION,
         'OUTPUT_PATH':f'./result/{VERSION}/',
         'INPUT_PATH':'/kaggle/input/fork-of-brtas20-rsna2021-external-datasets-2d/brats20_{}/*.npz',
