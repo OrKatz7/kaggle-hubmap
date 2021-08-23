@@ -82,7 +82,7 @@ def get_config():
         
         'restart_epoch_list':[1,1,1,1,1], 
         'unfreeze_epoch':1,
-        'num_epochs':20,
+        'num_epochs':2,
         'early_stopping':True,
         'patience':50,
 
