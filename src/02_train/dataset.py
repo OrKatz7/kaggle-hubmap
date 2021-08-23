@@ -17,7 +17,7 @@ class RSNADatasetTrain(Dataset):
         self.h, self.w = self.config['input_resolution']
         
     def __len__(self):
-        return len(self.data_df)
+        return len(self.paths)
     
     def __getitem__(self,idx):
         data = np.load(self.paths[idx])
