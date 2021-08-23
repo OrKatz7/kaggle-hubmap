@@ -74,8 +74,8 @@ if __name__=='__main__':
     for seed in config['split_seed_list']:
         trn_idxs_list = [glob.glob(INPUT_PATH.format("train"))]
         val_idxs_list = [glob.glob(INPUT_PATH.format("val"))]
-        print(trn_idxs_list[0:10])
-        print(val_idxs_list[0:10])
+        print(trn_idxs_list[0][0:10])
+        print(val_idxs_list[0][0:10])
         with open(opj(config['OUTPUT_PATH'],f'trn_idxs_list_seed{seed}'), 'wb') as f:
             pickle.dump(trn_idxs_list, f)
         with open(opj(config['OUTPUT_PATH'],f'val_idxs_list_seed{seed}'), 'wb') as f:
