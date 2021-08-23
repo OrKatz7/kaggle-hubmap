@@ -126,7 +126,8 @@ class UNET_SERESNEXT101(nn.Module):
         
         #encoder
         model_name = 'se_resnext101_32x4d'
-        if load_weights:
+#         if load_weights and False:
+        if False:
             seresnext101 = pretrainedmodels.__dict__[model_name](pretrained='imagenet')
         else:
             seresnext101 = pretrainedmodels.__dict__[model_name](pretrained=None)
