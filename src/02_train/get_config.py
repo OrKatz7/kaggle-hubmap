@@ -24,7 +24,7 @@ def get_config():
         'val_idxs_list_path':None,
         
         'num_classes':1,
-        'input_resolution':(320,320),
+        'input_resolution':(224,224),
         'resolution':(1024,1024),
         'dice_threshold':0.5,
         'small_mask_threshold':0,
