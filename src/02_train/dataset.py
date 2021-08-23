@@ -6,7 +6,7 @@ from torch.utils.data import Dataset
 from transforms import get_transforms_train, get_transforms_valid
 from utils import rle2mask
 
-class HuBMAPDatasetTrain(Dataset):
+class RSNADatasetTrain(Dataset):
     def __init__(self, paths, config, mode='train'):
         self.paths = paths
         self.config = config
