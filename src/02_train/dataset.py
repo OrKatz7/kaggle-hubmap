@@ -29,6 +29,7 @@ class RSNADatasetTrain(Dataset):
             augmented = self.transforms(image=img.astype(np.uint8), 
                                         mask=mask.astype(np.int8))
         img  = augmented['image']
-        mask = augmented['mask'].transpose(2,0,1)
+        mask = augmented['mask']
+        print(mask.shape)
         label = data['label'].astype(float)
         return {'img':img,'mask':mask,'label':label}
