@@ -161,16 +161,16 @@ class UNET_SERESNEXT101(nn.Module):
         self.upsample1 = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
         
         #deep supervision
-        self.deep4 = conv1x1(64,1).apply(init_weight)
-        self.deep3 = conv1x1(64,1).apply(init_weight)
-        self.deep2 = conv1x1(64,1).apply(init_weight)
-        self.deep1 = conv1x1(64,1).apply(init_weight)
+        self.deep4 = conv1x1(64,3).apply(init_weight)
+        self.deep3 = conv1x1(64,3).apply(init_weight)
+        self.deep2 = conv1x1(64,3).apply(init_weight)
+        self.deep1 = conv1x1(64,3).apply(init_weight)
         
         #final conv
         self.final_conv = nn.Sequential(
             conv3x3(320,64).apply(init_weight),
             nn.ELU(True),
-            conv1x1(64,1).apply(init_weight)
+            conv1x1(64,3).apply(init_weight)
         )
         
         #clf head
