@@ -21,14 +21,14 @@ class RSNADatasetTrain(Dataset):
     
     def __getitem__(self,idx):
         data = np.load(self.paths[idx])
-        img = data['img']
+        img = data['img'].astype(np.uint8)
         img = cv2.resize(img, (self.w,self.h), interpolation=cv2.INTER_AREA)
-        mask =  data['mask']
+        mask =  data['mask'].astype(np.uint8)
         mask = cv2.resize(mask, (self.w,self.h), interpolation=cv2.INTER_AREA)
         if self.transforms:
             augmented = self.transforms(image=img.astype(np.uint8), 
                                         mask=mask.astype(np.int8))
         img  = augmented['image']
         mask = augmented['mask']
-        label = data['label']
+        label = data['label'].astype(float)
         return {'img':img,'mask':mask,'label':label}
