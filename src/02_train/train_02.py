@@ -5,6 +5,7 @@ warnings.simplefilter('ignore')
 from utils import fix_seed
 from get_config import get_config
 from get_fold_idxs_list import get_fold_idxs_list
+from sklearn.model_selection import train_test_split
 from run import run
 import pickle
 
@@ -71,12 +72,12 @@ if __name__=='__main__':
     # train
     data = glob.glob(INPUT_PATH)
     for seed in config['split_seed_list']:
-        trn_idxs_list, val_idxs_list = get_fold_idxs_list(data)
+        trn_idxs_list, val_idxs_list = train_test_split(data,test_size=0.2, random_state=seed, shuffle=True)
         with open(opj(config['OUTPUT_PATH'],f'trn_idxs_list_seed{seed}'), 'wb') as f:
             pickle.dump(trn_idxs_list, f)
         with open(opj(config['OUTPUT_PATH'],f'val_idxs_list_seed{seed}'), 'wb') as f:
             pickle.dump(val_idxs_list, f)
-        run(seed, data_df, None, trn_idxs_list, val_idxs_list)
+        run(seed, None, None, trn_idxs_list, val_idxs_list)
         
     # score
     score_list  = []
