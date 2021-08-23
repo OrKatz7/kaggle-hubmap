@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import os
 from os.path import join as opj
-
+import glob
 
 if __name__=='__main__':
     # config
@@ -26,51 +26,52 @@ if __name__=='__main__':
     device = config['device']
     print(device)
     
-    # import data 
-    train_df = pd.read_csv(opj(INPUT_PATH, 'train.csv'))
-    info_df  = pd.read_csv(opj(INPUT_PATH,'HuBMAP-20-dataset_information.csv'))
-    sub_df = pd.read_csv(opj(INPUT_PATH, 'sample_submission.csv'))
-    print('train_df.shape = ', train_df.shape)
-    print('info_df.shape  = ', info_df.shape)
-    print('sub_df.shape = ', sub_df.shape)
+#     # import data 
+#     train_df = pd.read_csv(opj(INPUT_PATH, 'train.csv'))
+#     info_df  = pd.read_csv(opj(INPUT_PATH,'HuBMAP-20-dataset_information.csv'))
+#     sub_df = pd.read_csv(opj(INPUT_PATH, 'sample_submission.csv'))
+#     print('train_df.shape = ', train_df.shape)
+#     print('info_df.shape  = ', info_df.shape)
+#     print('sub_df.shape = ', sub_df.shape)
     
     # dataset
-    data_df = []
-    for data_path in config['train_data_path_list']:
-        _data_df = pd.read_csv(opj(data_path,'data.csv'))
-        _data_df['data_path'] = data_path
-        data_df.append(_data_df)
-    data_df = pd.concat(data_df, axis=0).reset_index(drop=True)
+#     data_df = []
+#     for data_path in config['train_data_path_list']:
+#         _data_df = pd.read_csv(opj(data_path,'data.csv'))
+#         _data_df['data_path'] = data_path
+#         data_df.append(_data_df)
+#     data_df = pd.concat(data_df, axis=0).reset_index(drop=True)
 
-    print('data_df.shape = ', data_df.shape)
-    data_df = data_df[data_df['std_img']>10].reset_index(drop=True)
-    print('data_df.shape = ', data_df.shape)
-    data_df['binned'] = np.round(data_df['ratio_masked_area'] * config['multiplier_bin']).astype(int)
-    data_df['is_masked'] = data_df['binned']>0
+#     print('data_df.shape = ', data_df.shape)
+#     data_df = data_df[data_df['std_img']>10].reset_index(drop=True)
+#     print('data_df.shape = ', data_df.shape)
+#     data_df['binned'] = np.round(data_df['ratio_masked_area'] * config['multiplier_bin']).astype(int)
+#     data_df['is_masked'] = data_df['binned']>0
 
-    trn_df = data_df.copy()
-    trn_df['binned'] = trn_df['binned'].apply(lambda x:config['binned_max'] if x>=config['binned_max'] else x)
-    trn_df_1 = trn_df[trn_df['is_masked']==True]
-    print(trn_df['is_masked'].value_counts())
-    print(trn_df_1['binned'].value_counts())
-    print('mean = ', int(trn_df_1['binned'].value_counts().mean()))
+#     trn_df = data_df.copy()
+#     trn_df['binned'] = trn_df['binned'].apply(lambda x:config['binned_max'] if x>=config['binned_max'] else x)
+#     trn_df_1 = trn_df[trn_df['is_masked']==True]
+#     print(trn_df['is_masked'].value_counts())
+#     print(trn_df_1['binned'].value_counts())
+#     print('mean = ', int(trn_df_1['binned'].value_counts().mean()))
     
-    info_df['image_name'] = info_df['image_file'].apply(lambda x:x.split('.')[0])
-    patient_mapper = {}
-    for (x,y) in info_df[['image_name','patient_number']].values:
-        patient_mapper[x] = y
-    data_df['patient_number'] = data_df['filename_img'].apply(lambda x:patient_mapper[x.split('_')[0]])
+#     info_df['image_name'] = info_df['image_file'].apply(lambda x:x.split('.')[0])
+#     patient_mapper = {}
+#     for (x,y) in info_df[['image_name','patient_number']].values:
+#         patient_mapper[x] = y
+#     data_df['patient_number'] = data_df['filename_img'].apply(lambda x:patient_mapper[x.split('_')[0]])
     
-    val_patient_numbers_list = [
-        [63921], # fold0
-        [68250], # fold1
-        [65631], # fold2
-        [67177], # fold3
-    ]
+#     val_patient_numbers_list = [
+#         [63921], # fold0
+#         [68250], # fold1
+#         [65631], # fold2
+#         [67177], # fold3
+#     ]
     
     # train
+    data = glob.glob(INPUT_PATH)
     for seed in config['split_seed_list']:
-        trn_idxs_list, val_idxs_list = get_fold_idxs_list(data_df, val_patient_numbers_list)
+        trn_idxs_list, val_idxs_list = get_fold_idxs_list(data)
         with open(opj(config['OUTPUT_PATH'],f'trn_idxs_list_seed{seed}'), 'wb') as f:
             pickle.dump(trn_idxs_list, f)
         with open(opj(config['OUTPUT_PATH'],f'val_idxs_list_seed{seed}'), 'wb') as f:
