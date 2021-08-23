@@ -40,7 +40,6 @@ def get_transforms_train():
         
         Normalize(mean=(MEAN[0], MEAN[1], MEAN[2]), 
                   std=(STD[0], STD[1], STD[2])),
-        ToTensor(),
     ])
     return transform_train
 
@@ -49,7 +48,6 @@ def get_transforms_valid():
     transform_valid = Compose([
         Normalize(mean=(MEAN[0], MEAN[1], MEAN[2]), 
                   std=(STD[0], STD[1], STD[2])),
-        ToTensor(),
     ] )
     return transform_valid
 
