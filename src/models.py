@@ -131,7 +131,6 @@ class UNET_SERESNEXT101(nn.Module):
             seresnext101 = pretrainedmodels.__dict__[model_name](pretrained='imagenet')
         else:
             seresnext101 = pretrainedmodels.__dict__[model_name](pretrained=None)
-#             seresnext101.load_state_dict(torch.load("se_resnext101_32x4d-3b2fe3d8.pth"))
         
         self.encoder0 = nn.Sequential(
             seresnext101.layer0.conv1, #(*,3,h,w)->(*,64,h/2,w/2)
