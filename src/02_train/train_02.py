@@ -15,6 +15,9 @@ import os
 from os.path import join as opj
 import glob
 
+def foo(row):
+    return f"{row:05d}"
+
 if __name__=='__main__':
     # config
     fix_seed(2021)
@@ -77,6 +80,26 @@ if __name__=='__main__':
         
         trn_idxs_list = [glob.glob(INPUT_PATH.format("train"))]
         val_idxs_list = [glob.glob(INPUT_PATH.format("val"))]
+        
+#         df = pd.read_csv("../input/rsna2021-k-fold-split/train_kfold.csv")
+#         df.BraTS21ID = df.BraTS21ID.apply(foo)
+#         main_list = [row.split("/")[-1].split("_")[0] for row in glob.glob("../input/rsna21pseudolabel/rsna_pseudo_step1/*.npz")]
+#         main_fold = [df[df.BraTS21ID==row]['fold'].values[0] for row in main_list]
+#         trn_idxs_list = []
+#         val_idxs_list = []
+#         for f in range(5):
+#             trn_list = []
+#             val_list = []
+#             for row,col in zip(main_list,main_fold):
+#                 if col ==f:
+#                     val_list.append(row)
+#                 else:
+#                     trn_list.append(row)
+#             trn_idxs_list.append(trn_list)
+#             val_idxs_list.append(val_list)
+        
+        
+        
 #         print(trn_idxs_list[0][0:10])
 #         print(val_idxs_list[0][0:10])
         with open(opj(config['OUTPUT_PATH'],f'trn_idxs_list_seed{seed}'), 'wb') as f:
