@@ -9,7 +9,7 @@ import torch
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from dataset import RSNADatasetTrain
-from models import build_model
+from models import build_model,init_weight
 from scheduler import CosineLR
 from utils import elapsed_time
 from lovasz_loss import lovasz_hinge
@@ -30,7 +30,7 @@ def run(seed, data_df, pseudo_df, trn_idxs_list, val_idxs_list):
                 'elapsed_time']
     
     criterion = nn.BCEWithLogitsLoss().to(device)
-    criterion_clf = nn.BCEWithLogitsLoss().to(device)
+    criterion_clf = nn.BCEWithLogitsLoss().to(device) # criterion_clf = nn.CrossEntropyLoss().to(device)
     
     for fold, (trn_idxs, val_idxs) in enumerate(zip(trn_idxs_list, val_idxs_list)):
         if fold in fold_list:
@@ -51,7 +51,7 @@ def run(seed, data_df, pseudo_df, trn_idxs_list, val_idxs_list):
 #             trn_df = pd.concat([trn_df, pseudo_df], axis=0).reset_index(drop=True)
         
         # dataloader
-        valid_dataset = RSNADatasetTrain(val_idxs, config, mode='valid')
+        valid_dataset = RSNADatasetTrain(val_idxs, config, mode='valid') # add df
         valid_loader  = DataLoader(valid_dataset, batch_size=config['test_batch_size'],
                                    shuffle=False, num_workers=4, pin_memory=True)
         
@@ -62,8 +62,19 @@ def run(seed, data_df, pseudo_df, trn_idxs_list, val_idxs_list):
                             clfhead=config['clfhead'],
                             clf_threshold=config['clf_threshold'],
                             load_weights=True).to(device, torch.float32)
+        
+        
         if pretrain_path_list is not None:
             model.load_state_dict(torch.load(pretrain_path_list[fold]))
+            print("load pretrain model!!!!" ,pretrain_path_list[fold])
+            
+#         model.clf = nn.Sequential(
+#             nn.BatchNorm1d(2048).apply(init_weight),
+#             nn.Linear(2048,512).apply(init_weight),
+#             nn.ELU(True),
+#             nn.BatchNorm1d(512).apply(init_weight),
+#             nn.Linear(512,3).apply(init_weight)
+#         )
             
 #         for p in model.parameters():
 #             p.requires_grad = True
@@ -98,7 +109,7 @@ def run(seed, data_df, pseudo_df, trn_idxs_list, val_idxs_list):
                 continue
             print('lr : ', [ group['lr'] for group in optimizer.param_groups ])
             #train
-            train_dataset = RSNADatasetTrain(trn_idxs, config, mode='train')
+            train_dataset = RSNADatasetTrain(trn_idxs, config, mode='train') # add df
             train_loader  = DataLoader(train_dataset, batch_size=config['trn_batch_size'],
                                        shuffle=True, num_workers=4, pin_memory=True, drop_last=True)
             model.train()
@@ -114,7 +125,7 @@ def run(seed, data_df, pseudo_df, trn_idxs_list, val_idxs_list):
                 with torch.cuda.amp.autocast():
                     batch,c,h,w = data['img'].shape
                     if config['clfhead']:
-                        y_clf = data['label'].to(device, torch.float32, non_blocking=True)
+                        y_clf = data['label'].to(device, torch.float32, non_blocking=True) #torch.long
                         if config['deepsupervision']:
                             logits,logits_deeps,logits_clf = model(data['img'].to(device, torch.float32, non_blocking=True))
                         else:
@@ -167,7 +178,7 @@ def run(seed, data_df, pseudo_df, trn_idxs_list, val_idxs_list):
                 with torch.no_grad():
                     batch,c,h,w  = data['img'].shape
                     if config['clfhead']:
-                        y_clf = data['label'].to(device, torch.float32, non_blocking=True)
+                        y_clf = data['label'].to(device, torch.float32, non_blocking=True) #torch.long
                         if config['deepsupervision']:
                             logits,logits_deeps,logits_clf = model(data['img'].to(device, torch.float32, non_blocking=True))
                         else:
