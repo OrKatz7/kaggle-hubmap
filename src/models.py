@@ -117,13 +117,13 @@ class DecodeBlock(nn.Module):
             
 #U-Net SeResNext101 + CBAM + hypercolumns + deepsupervision
 class UNET_SERESNEXT101(nn.Module):
-    def __init__(self, resolution, deepsupervision, clfhead, clf_threshold, load_weights=True):
+    def __init__(self, resolution, deepsupervision, clfhead, clf_threshold, load_weights=True,features=False):
         super().__init__()
         h,w = resolution
         self.deepsupervision = deepsupervision
         self.clfhead = clfhead
         self.clf_threshold = clf_threshold
-        
+        self.features = features
         #encoder
         model_name = 'se_resnext101_32x4d'
 #         if load_weights and False:
@@ -191,7 +191,8 @@ class UNET_SERESNEXT101(nn.Module):
         x2 = self.encoder2(x1) #->(*,512,h/8,w/8)
         x3 = self.encoder3(x2) #->(*,1024,h/16,w/16)
         x4 = self.encoder4(x3) #->(*,2048,h/32,w/32)
-        
+        if self.features:
+            return self.avgpool(x4).squeeze(-1).squeeze(-1)
         #clf head
         logits_clf = self.clf(self.avgpool(x4).squeeze(-1).squeeze(-1)) #->(*,1)
         if (not self.training) & (self.clf_threshold is not None):
@@ -229,6 +230,7 @@ class UNET_SERESNEXT101(nn.Module):
         #final conv
         logits = self.final_conv(hypercol) #->(*,1,h,w)
         
+            
         if self.clfhead:
             if self.deepsupervision:
                 s4 = self.deep4(y4)
