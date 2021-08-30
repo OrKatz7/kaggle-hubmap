@@ -25,7 +25,7 @@ def get_config():
         
         'num_classes':1,
         'input_resolution':(224,224),
-        'resolution':(1024,1024),
+        'resolution':(224,224),
         'dice_threshold':0.5,
         'small_mask_threshold':0,
         'multiplier_bin':20,
