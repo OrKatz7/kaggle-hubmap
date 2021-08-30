@@ -25,7 +25,7 @@ class RSNADatasetTrain(Dataset):
 #         name = str(int(p.split("/")[-1].split("_")[0]))
 #         MGMT_value = int(self.df[self.df.BraTS21ID==name]['MGMT_value'].values[0])+1
         data = np.load(p)
-        img = data['img'].astype(np.uint8)[:,:,:3]
+        img = data['img'].astype(np.uint8)#[:,:,:3]
         img = cv2.resize(img, (self.w,self.h), interpolation=cv2.INTER_AREA)
         mask =  data['mask'].astype(np.uint8)
         mask = cv2.resize(mask, (self.w,self.h), interpolation=cv2.INTER_AREA)
