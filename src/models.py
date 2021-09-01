@@ -133,8 +133,8 @@ class UNET_SERESNEXT101(nn.Module):
             seresnext101 = pretrainedmodels.__dict__[model_name](pretrained=None)
             
         #update   
-        conv1 = seresnext101.conv1
-        seresnext101.conv1 = nn.Conv2d(in_channels=4,
+        conv1 = seresnext101.layer0.conv1
+        seresnext101.layer0.conv1 = nn.Conv2d(in_channels=4,
                                 out_channels=conv1.out_channels,
                                 kernel_size=conv1.kernel_size,
                                 stride=conv1.stride,
@@ -142,8 +142,8 @@ class UNET_SERESNEXT101(nn.Module):
                                 bias=conv1.bias)
 
         # copy pretrained weights
-        seresnext101.conv1.weight.data[:,:3,:,:] = conv1.weight.data
-        seresnext101.conv1.weight.data[:,3:,:,:] = conv1.weight.data[:,:1,:,:]
+        seresnext101.layer0.conv1.weight.data[:,:3,:,:] = conv1.weight.data
+        seresnext101.layer0.conv1.weight.data[:,3:,:,:] = conv1.weight.data[:,:1,:,:]
         
         self.encoder0 = nn.Sequential(
             seresnext101.layer0.conv1, #(*,3,h,w)->(*,64,h/2,w/2)
