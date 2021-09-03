@@ -194,7 +194,7 @@ class UNET_SERESNEXT101(nn.Module):
             nn.Linear(2048,512).apply(init_weight),
             nn.ELU(True),
             nn.BatchNorm1d(512).apply(init_weight),
-            nn.Linear(512,1).apply(init_weight)
+            nn.Linear(512,3).apply(init_weight)
         )
         
     def forward(self, inputs):
