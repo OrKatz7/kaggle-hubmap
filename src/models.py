@@ -117,7 +117,7 @@ class DecodeBlock(nn.Module):
             
 #U-Net SeResNext101 + CBAM + hypercolumns + deepsupervision
 class UNET_SERESNEXT101(nn.Module):
-    def __init__(self, resolution, deepsupervision, clfhead, clf_threshold, load_weights=True,features=False):
+    def __init__(self, resolution, deepsupervision, clfhead, clf_threshold, load_weights=True,features=False,num_class=1):
         super().__init__()
         h,w = resolution
         self.deepsupervision = deepsupervision
@@ -194,7 +194,7 @@ class UNET_SERESNEXT101(nn.Module):
             nn.Linear(2048,512).apply(init_weight),
             nn.ELU(True),
             nn.BatchNorm1d(512).apply(init_weight),
-            nn.Linear(512,3).apply(init_weight)
+            nn.Linear(512,num_class).apply(init_weight)
         )
         
     def forward(self, inputs):
